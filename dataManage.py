@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Author: winterssy <winterssy@foxmail.com>
+
 
 import cv2
 import numpy as np
