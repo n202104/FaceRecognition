@@ -11,7 +11,6 @@ from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QMessageBox
 from PyQt5.uic import loadUi
 
 import os
-os.environ["OPENCV_VIDEOIO_PRIORITY_GSTREAMER"] = "0"
 import webbrowser
 import logging
 import logging.config
@@ -151,22 +150,25 @@ class CoreUI(QMainWindow):
     # 打开/关闭摄像头
     def startWebcam(self):
         if not self.cap.isOpened():
-        # 使用 libcamera 的 GStreamer 管道获取视频流
-            pipeline = ("libcamerasrc ! video/x-raw, width=640, height=480, framerate=30/1 ! "
-                    "videoconvert ! appsink")
-            self.cap = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
+            if self.isExternalCameraUsed:
+                camID = 1
+            else:
+                camID = 0
+            self.cap.open(camID)
+            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
             ret, frame = self.cap.read()
             if not ret:
-            logging.error('无法调用 CSI 摄像头')
-            self.logQueue.put('Error：初始化摄像头失败')
-            self.cap.release()
-            self.startWebcamButton.setIcon(QIcon('./icons/error.png'))
-        else:
-            self.faceProcessingThread.start()  # 启动OpenCV图像处理线程
-            self.timer.start(5)  # 启动定时器
-            self.panalarmThread.start()  # 启动报警系统线程
-            self.startWebcamButton.setIcon(QIcon('./icons/success.png'))
-            self.startWebcamButton.setText('关闭摄像头')
+                logging.error('无法调用电脑摄像头{}'.format(camID))
+                self.logQueue.put('Error：初始化摄像头失败')
+                self.cap.release()
+                self.startWebcamButton.setIcon(QIcon('./icons/error.png'))
+            else:
+                self.faceProcessingThread.start()  # 启动OpenCV图像处理线程
+                self.timer.start(5)  # 启动定时器
+                self.panalarmThread.start()  # 启动报警系统线程
+                self.startWebcamButton.setIcon(QIcon('./icons/success.png'))
+                self.startWebcamButton.setText('关闭摄像头')
 
         else:
             text = '如果关闭摄像头，须重启程序才能再次打开。'
