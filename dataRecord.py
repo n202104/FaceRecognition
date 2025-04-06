@@ -351,7 +351,7 @@ class DataRecordUI(QWidget):
             try:
                 cursor.execute('SELECT * FROM users WHERE stu_id=?', (stu_id,))
                 if cursor.fetchall():
-                    text = '数据库已存在学号为 <font color=blue>{}</font> 的用户记录。'.format(stu_id)
+                    text = '数据库已存在编号为 <font color=blue>{}</font> 的用户记录。'.format(stu_id)
                     informativeText = '<b>是否覆盖？</b>'
                     ret = DataRecordUI.callDialog(QMessageBox.Warning, text, informativeText,
                                                   QMessageBox.Yes | QMessageBox.No)

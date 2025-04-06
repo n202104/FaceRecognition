@@ -178,7 +178,7 @@ class Ui_dataRecordUI(object):
         self.dataGroupBox.setTitle(_translate("dataRecordUI", "数据录入"))
         self.userInfoGroupBox.setTitle(_translate("dataRecordUI", "基本信息"))
         self.infoConfirmGroupBox.setTitle(_translate("dataRecordUI", "信息确认"))
-        self.stuIDLabel.setText(_translate("dataRecordUI", "学号："))
+        self.stuIDLabel.setText(_translate("dataRecordUI", "编号："))
         self.cnNameLabel.setText(_translate("dataRecordUI", "姓名："))
         self.enNameLabel.setText(_translate("dataRecordUI", "汉语拼音："))
         self.migrateToDbButton.setText(_translate("dataRecordUI", "同步到数据库"))

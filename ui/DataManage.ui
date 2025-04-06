@@ -202,7 +202,7 @@
       </rect>
      </property>
      <property name="title">
-      <string>学号查询</string>
+      <string>编号查询</string>
      </property>
      <widget class="QLabel" name="queryResultLabel">
       <property name="geometry">
@@ -236,7 +236,7 @@
        <item>
         <widget class="QLineEdit" name="queryUserLineEdit">
          <property name="placeholderText">
-          <string>请输入12位学号，仅支持精确查询</string>
+          <string>请输入12位编号，仅支持精确查询</string>
          </property>
         </widget>
        </item>
@@ -286,7 +286,7 @@
             <enum>QFrame::NoFrame</enum>
            </property>
            <property name="text">
-            <string>学号：</string>
+            <string>编号：</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -398,7 +398,7 @@
      </property>
      <column>
       <property name="text">
-       <string>学号</string>
+       <string>编号</string>
       </property>
      </column>
      <column>

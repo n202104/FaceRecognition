@@ -177,7 +177,7 @@ class DataManageUI(QWidget):
                         logging.error('系统无法删除删除{}/stu_{}'.format(self.datasets, stu_id))
                         self.logQueue.put('Error：删除人脸数据失败，请手动删除{}/stu_{}目录'.format(self.datasets, stu_id))
 
-                text = '你已成功删除学号为 <font color=blue>{}</font> 的用户记录。'.format(stu_id)
+                text = '你已成功删除编号为 <font color=blue>{}</font> 的用户记录。'.format(stu_id)
                 informativeText = '<b>请在右侧菜单重新训练人脸数据。</b>'
                 DataManageUI.callDialog(QMessageBox.Information, text, informativeText, QMessageBox.Ok)
 
@@ -226,8 +226,8 @@ class DataManageUI(QWidget):
                     raise RecordNotFound
                 cursor.execute('UPDATE users SET face_id=? WHERE stu_id=?', (face_id, stu_id,))
             except RecordNotFound:
-                logging.warning('数据库中找不到学号为{}的用户记录'.format(stu_id))
-                self.logQueue.put('发现学号为{}的人脸数据，但数据库中找不到相应记录，已忽略'.format(stu_id))
+                logging.warning('数据库中找不到编号为{}的用户记录'.format(stu_id))
+                self.logQueue.put('发现编号为{}的人脸数据，但数据库中找不到相应记录，已忽略'.format(stu_id))
                 continue
             subject_dir_path = data_folder_path + '/' + dir_name
             subject_images_names = os.listdir(subject_dir_path)
