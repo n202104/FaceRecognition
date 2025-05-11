@@ -4,6 +4,8 @@
 import telegram
 import cv2
 import dlib
+import RPi.GPIO as GPIO
+import threading
 
 from PyQt5.QtCore import QTimer, QThread, pyqtSignal, QRegExp, Qt
 from PyQt5.QtGui import QImage, QPixmap, QIcon, QTextCursor, QRegExpValidator
@@ -24,6 +26,21 @@ import multiprocessing
 from configparser import ConfigParser
 from datetime import datetime
 
+RELAY_PIN = 17  # BCM 引脚号
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(RELAY_PIN, GPIO.OUT, initial=GPIO.LOW)
+
+def lock_door():
+    """关闭继电器，上锁"""
+    GPIO.output(RELAY_PIN, GPIO.LOW)
+    logging.info('[INFO] Door locked.')
+
+def unlock_door():
+    """打开继电器，解锁；10 秒后自动上锁"""
+    GPIO.output(RELAY_PIN, GPIO.HIGH)
+    logging.info('[INFO] Door unlocked. Will relock in 10s.')
+    threading.Timer(10.0, lock_door).start()
 
 # 找不到已训练的人脸数据文件
 class TrainingDataNotFoundError(FileNotFoundError):
@@ -45,13 +62,11 @@ class CoreUI(QMainWindow):
     receiveLogSignal = pyqtSignal(str)  # LOG信号
 
     def __init__(self):
-        print("test")
+
         super(CoreUI, self).__init__()
-        print("test")
         loadUi('./ui/Core.ui', self)
         self.setWindowIcon(QIcon('./icons/icon.png'))
         self.setFixedSize(1161, 623)
-        print("test")
         # 图像捕获
         self.isExternalCameraUsed = False
         self.useExternalCameraCheckBox.stateChanged.connect(
@@ -101,6 +116,8 @@ class CoreUI(QMainWindow):
         self.logOutputThread = threading.Thread(target=self.receiveLog, daemon=True)
         self.logOutputThread.start()
 
+    
+    
     # 检查数据库状态
     def initDb(self):
         try:
@@ -139,6 +156,7 @@ class CoreUI(QMainWindow):
                 self.initDbButton.setEnabled(False)
                 self.faceRecognizerCheckBox.setToolTip('须先开启人脸跟踪')
                 self.faceRecognizerCheckBox.setEnabled(True)
+    
 
     # 是否使用外接摄像头
     def useExternalCamera(self, useExternalCameraCheckBox):
@@ -628,10 +646,13 @@ class FaceProcessingThread(QThread):
                             # 若置信度评分小于置信度阈值，认为是可靠识别
                             if confidence < self.confidenceThreshold:
                                 isKnown = True
+                                unlock_door()   #开锁
                                 cv2.putText(realTimeFrame, en_name, (_x - 5, _y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1,
                                             (0, 97, 255), 2)
+
                             else:
                                 # 若置信度评分大于置信度阈值，该人脸可能是陌生人
+                                lock_door()     #关锁
                                 cv2.putText(realTimeFrame, 'unknown', (_x - 5, _y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1,
                                             (0, 0, 255), 2)
                                 # 若置信度评分超出自动报警阈值，触发报警信号
@@ -728,3 +749,9 @@ if __name__ == '__main__':
     window = CoreUI()
     window.show()
     sys.exit(app.exec())
+    try:
+        sys.exit(app.exec())
+    finally:
+        # —— 程序退出时确保上锁并清理 GPIO —— 
+        lock_door()
+        GPIO.cleanup()

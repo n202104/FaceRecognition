@@ -58,7 +58,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>编号：</string>
+    <string>学号：</string>
    </property>
   </widget>
   <widget class="QLabel" name="cnNameLabel">
@@ -163,7 +163,7 @@
     <string/>
    </property>
    <property name="placeholderText">
-    <string>请输入12位编号，仅限数字</string>
+    <string>请输入12位学号，仅限数字</string>
    </property>
    <property name="clearButtonEnabled">
     <bool>true</bool>

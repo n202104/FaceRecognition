@@ -516,7 +516,7 @@
       </font>
      </property>
      <property name="text">
-      <string>基于OpenCV的视频人脸识别</string>
+      <string>基于树莓派的人脸识别门禁系统</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
